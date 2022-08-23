@@ -1,0 +1,64 @@
+sudo: required
+dist: bionic
+language: python
+python:
+  - "3.10"
+
+# command to install dependencies
+install:
+  - pip install ansible
+  - pip install flake8
+  - pip install wheel       # for ansible-test
+  - pip install Jinja2      # for ansible-test
+  - pip3 install pyyaml     # for ansible-test
+  - pip3 install voluptuous # for ansible-test
+  - pip install pyyaml      # for compile test with Python2
+  - pip3 install pylint     # for ansible-test
+  - pip install yamllint    # for ansible-test
+  - pip install pytest      # for pytest
+  - pip install pytest-mock # for pytest
+  - pip3 install rstcheck
+  - pip3 install ansible-doc-extractor
+  - pip install sphinx
+  - pip install sphinx_rtd_theme
+  - pip install lxml
+  - pip3 install lxml
+  - ansible --version
+  
+env:
+  global:
+    secure: Zm/0TH24lXWjxtLpkW0QgqSKkUxzwg8yzmF1CHEoE4UXr3vCJDOBTJbvHsvTqhied+uvAG44aAAKpKxXHtzrWH2hFV+pwui7TqnUnnM/hT5H7VKX27u4Zh5r7HBffUp5RGlXKn4jUNGd5gjXXJqCcRGWnwP6r5B+uUcuCRqH7+yZgW3ZuNfz5xHuKaRotPHG0YmAx7jcXTx8J08XEEDILSedWAg2poEDGaRsOjp8w8itFTORmXqzeIDO4VoHMMgQt2W3bObtI4ym9uI/aHvEP1VC5CAVKlC5QlBsb7Xgcs85KaUXbBEG35tmMMUxlMfaEdN+XPo7q+aUI/ccgLyPTmZQtZV48gRr5KcvmBBEnZ7gBfotjUMB7pcRozn58HP4WtiwKzppNYAdSEc9h24rl1txojSEQO+OWQIqMXtdV1cif1pY49gf3ITGxbiRhz66hVWpUh55PmYWgr9WjgY3NjoXXFEvQSZUFD7IfA5Fe7eH+bVwe8TEDSvHgv8hLpqkZOXim7s7EwJ8wFGsc52A0mUs3kA89D7hTNXF7fM27JhzGcV2tcP2+vVa22sk9Z9YyDZHSbw7LjnwPP8nQ7kLTYqj7tOb5/9et2g+TG0sMdDxQ2f9eols+GAdRmcbgwjJ9z51nOfkszwLfTHY1dwoKCqA7cTl7brxkPl++DFD3xY= 
+
+#command to run tests
+script:
+
+  # With flake ignore
+  #  E402: <module> level import not at top of file (as per Ansible module developement)
+  #  W503: line break before binary operator (PEP8 advices to put logical operator ahead)
+  - flake8 plugins/modules/* --max-line-length=160 --ignore=E402,W503
+  - flake8 plugins/module_utils/* --max-line-length=160 --ignore=E402,W503
+  - flake8 plugins/inventory/* --max-line-length=160 --ignore=E402,W503  
+  - flake8 tests/unit/*/* --max-line-length=160 --ignore=E402,W503
+  - ansible-galaxy collection build
+  - ansible-galaxy collection install ibm-power_hmc*
+  - build_path=`pwd`
+  - cd /home/travis/.ansible/collections/ansible_collections/ibm/power_hmc
+
+  - pyenv global 3.7
+  - ansible-test sanity --python 3.7 --skip-test shellcheck
+  - ansible-test sanity --python 3.10 --skip-test shellcheck
+  - cd /home/travis/.ansible/collections/
+  - python -m pytest
+  - cd $build_path
+  - bash devops/bin/gen_doc.sh
+
+# push the generated documentation using GitHub Pages
+deploy:
+    provider: pages
+    strategy: git
+    skip_cleanup: true
+    token: $GITHUB_API_KEY
+    local_dir: docs/build
+    keep_history: true
+    on:
+        branch: dev-collection
