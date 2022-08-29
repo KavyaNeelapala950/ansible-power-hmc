@@ -1,0 +1,27 @@
+---
+- name: Verify that play throws error when missing authentication_type reports error
+  hosts: hmcs
+  collections:
+      - ibm.power_hmc
+  connection: local
+
+  tasks:
+  - name: Create hmc user
+    hmc_user:
+      state: updated
+      hmc_host: "{{ inventory_hostname }}"
+      name: Ansible1
+      enable_user: False
+      hmc_auth:
+        username: hscroot
+        password: abc123
+#      attributes:
+#        authentication_type: ldap
+#        passwd: abcd7654321
+#        taskrole: hmcviewer
+    register: result
+
+  - name: Output Users
+    debug:
+      msg: "{{ result }}"
+

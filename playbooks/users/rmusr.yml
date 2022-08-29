@@ -1,0 +1,30 @@
+---
+- name: Verify that play reports an error when remote_user_name is specified for local authentication
+  hosts: hmcs
+  collections:
+      - ibm.power_hmc
+  connection: local
+
+  tasks:
+  - name: Create hmc user
+    hmc_user:
+      state: absent
+      hmc_host: "{{ inventory_hostname }}"
+#      name: AnsibleEngi4
+#      enable_user: true
+      type: local
+      hmc_auth:
+        username: hscroot
+        password: abc123
+#      attributes:
+#       new_name: kavya
+#        authentication_type: kerbero
+#        passwd: abcd1234567
+#        taskrole: hmcviewer
+#        remote_user_name: yogi@AUSTIN.IBM.COM
+    register: result
+
+  - name: Output Users
+    debug:
+      msg: "{{ result }}"
+

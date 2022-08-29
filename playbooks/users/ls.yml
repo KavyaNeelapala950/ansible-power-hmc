@@ -1,0 +1,29 @@
+---
+- name: Verify that play reports an error when remote_user_name is specified for local authentication
+  hosts: hmcs
+  collections:
+      - ibm.power_hmc
+  connection: local
+
+  tasks:
+  - name: Create hmc user
+    hmc_user:
+      state: facts
+      hmc_host: "{{ inventory_hostname }}"
+#      name: modify
+      type: user
+#      enable_user: True
+      hmc_auth:
+        username: hscroot
+        password: abc123
+#      attributes:
+#        authentication_type: local
+#        remote_user_name: cla@AUSTIN.IBM.COM
+#        taskrole: test
+#        passwd: abcde
+    register: result
+
+  - name: Output Users
+    debug:
+      msg: "{{ result }}"
+

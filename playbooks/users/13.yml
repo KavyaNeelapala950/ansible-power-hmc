@@ -1,0 +1,25 @@
+---
+- name: Verify that play throws error when missing resource_role/taskrole/authentication_type reports error
+  hosts: hmcs
+  collections:
+      - ibm.power_hmc
+  connection: local
+
+  tasks:
+  - name: Create hmc user
+    hmc_user:
+      state: present
+      hmc_host: "{{ inventory_hostname }}"
+      name: hmcldap5
+      hmc_auth:
+        username: hscroot
+        password: abc123
+      attributes:
+        authentication_type: local
+        passwd: abcd1234
+    register: result
+
+  - name: Output Users
+    debug:
+      msg: "{{ result }}"
+

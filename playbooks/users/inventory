@@ -1,0 +1,8 @@
+[hmcs]
+#9.3.147.112
+#9.3.84.240
+9.3.84.76
+
+[hmcs:vars]
+#ansible_user=Test
+ansible_python_interpreter=/usr/bin/python2

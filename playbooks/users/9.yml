@@ -1,0 +1,24 @@
+---
+- name: Verify that play reports error when we miss taskrole in attributes section
+  hosts: hmcs
+  collections:
+      - ibm.power_hmc
+  connection: local
+
+  tasks:
+  - name: Create hmc user
+    hmc_user:
+      state: present
+      hmc_host: "{{ inventory_hostname }}"
+      name: hmcldap4
+      hmc_auth:
+        username: hscroot
+        password: abc123
+      attributes:
+        authentication_type: ldap
+    register: result
+
+  - name: Output Users
+    debug:
+      msg: "{{ result }}"
+

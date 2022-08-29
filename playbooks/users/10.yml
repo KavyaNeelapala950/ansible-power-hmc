@@ -1,0 +1,26 @@
+---
+- name: Verify that play reports error when we miss passwd in attributes section
+  hosts: hmcs
+  collections:
+      - ibm.power_hmc
+  connection: local
+
+  tasks:
+  - name: Create hmc user
+    hmc_user:
+      state: present
+      hmc_host: "{{ inventory_hostname }}"
+      name: hmcldap5
+      hmc_auth:
+        username: hscroot
+        password: abc123
+      attributes:
+        resourcerole: Test
+        authentication_type: local
+        taskrole: hmcviewer
+    register: result
+
+  - name: Output Users
+    debug:
+      msg: "{{ result }}"
+
