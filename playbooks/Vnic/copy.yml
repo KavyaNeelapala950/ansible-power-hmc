@@ -14,41 +14,25 @@
     powervm_lpar_instance:
       hmc_host: '{{ inventory_hostname }}'
       hmc_auth: "{{ curr_hmc_auth }}"
-      system_name: zepp31fp
-      vm_name: testAnsi1
-      proc: 2
-      proc_unit: 2
-      mem: 2048
-      os_type: aix_linux
-      physical_io:
-      - U78D4.ND1.RCH0007-P2-C4
-#        P0-C5-C0
-      max_virtual_slots: 50
-      volume_config:
-        - vios_name: zepp31-vios1
-          volume_name: hdisk8
-      virt_network_config:
-        - network_name: VirtualNetwork_503Vswtch0
-          slot_number: 49
-      npiv_config:
-        - vios_name: zepp31-vios1
-          fc_port: fcs0
+      system_name: bX76a
+      os_type: aix
+      vm_name: test11
       vnic_config:
         - vnic_adapter_id: 9
           backing_devices:
-          - location_code: P1-C8-T1
+          - location_code: P1-C5-C1-T1
             capacity: 2
-            hosting_partition: zepp31-vios1
+            hosting_partition: b76-vios1
         - vnic_adapter_id: 11
           backing_devices:
-          - location_code: U78D4.ND1.RCH0007-P1-C8-T3
+          - location_code: P1-C5-C1-T4
             capacity: 50
-            hosting_partition: zepp31-vios1
+#            hosting_partition: zepp31-vios1
         - vnic_adapter_id: 12
-          backing_devices:
-          - location_code: P1-C8-T2
-            capacity: 24
-            hosting_partition: zepp31-vios1
+#          backing_devices:
+#          - location_code: P1-C8-T2
+#            capacity: 24
+#            hosting_partition: zepp31-vios1
       state: present
     register: testout
 
